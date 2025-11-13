@@ -1,28 +1,48 @@
-// AT THE TOP: We import 'useState' from React
 import React, { useState } from 'react';
-import './App.css'; // This line imports the CSS file you just made
+import './App.css';
 
 function App() {
 
-  // --- NEW FEATURE 1: 'STATE' ---
-  // We create a "state variable" to remember the user's choice.
-  // 'selectedMood' will store the number (1-5).
-  // 'setSelectedMood' is the function we use to update it.
-  const [selectedMood, setSelectedMood] = useState(null); // Default is null (nothing selected)
+  // --- OUR STATE VARIABLES ---
+  const [selectedMood, setSelectedMood] = useState(null);
+  const [address, setAddress] = useState(null); // NEW: This will store the user's wallet address
 
-  // --- NEW FEATURE 2: 'EVENT HANDLERS' ---
-  
-  // This function runs every time the user clicks a different radio button
-  const handleMoodChange = (event) => {
-    setSelectedMood(event.target.value); // Sets 'selectedMood' to the value (e.g., "3")
+  // --- NEW WALLET FUNCTION ---
+  const connectWallet = async () => {
+    // Check if the Petra wallet extension is installed
+    if ('aptos' in window) {
+      try {
+        // Ask the wallet to connect to our app
+        const response = await window.aptos.connect();
+        
+        // 'response' will be an object with the address and publicKey
+        setAddress(response.address);
+        
+      } catch (error) {
+        // This will happen if the user clicks "Reject" in their wallet
+        console.error(error);
+      }
+    } else {
+      // If the wallet isn't installed, open a new tab to its website
+      window.open('https://petra.app/', '_blank');
+    }
   };
 
-  // This function runs when the user clicks the "Submit" button
+  // --- YOUR EXISTING FORM FUNCTIONS ---
+  const handleMoodChange = (event) => {
+    setSelectedMood(event.target.value);
+  };
+
   const handleSubmit = (event) => {
-    event.preventDefault(); // Stops the webpage from reloading (default form behavior)
+    event.preventDefault(); 
+    
+    if (!address) {
+      alert("Please connect your wallet first.");
+      return;
+    }
     
     if (selectedMood) {
-      alert(`You selected mood: ${selectedMood}! \n(Next, we will send this to AWS and mint your token)`);
+      alert(`Wallet: ${address} \nSelected mood: ${selectedMood} \n(Next, we will send this to AWS and mint your token)`);
     } else {
       alert("Please select a mood before submitting.");
     }
@@ -31,10 +51,25 @@ function App() {
   return (
     <div className="App">
       
-      {/* 1. This is your Navbar */}
+      {/* 1. THIS IS YOUR NAVBAR (NOW UPDATED) */}
       <nav className="navbar">
         <span className="navbar-brand">AuraChain</span>
-        <button className="login-button">Login</button>
+        
+        {/*
+          This is a conditional button.
+          - If 'address' is null (not connected), it shows "Connect Wallet".
+          - If 'address' is set, it shows a shortened version of the user's address.
+        */}
+        {address ? (
+          <button className="login-button" style={{cursor: 'default'}}>
+            {/* Show first 6 and last 4 chars of the address */}
+            {`${address.slice(0, 6)}...${address.slice(-4)}`}
+          </button>
+        ) : (
+          <button className="login-button" onClick={connectWallet}>
+            Connect Wallet
+          </button>
+        )}
       </nav>
 
       <main className="main-content">
@@ -43,27 +78,15 @@ function App() {
         <div className="check-in-form">
           <h2>Daily Wellness Check-in</h2>
           
-          {/* We hook our 'handleSubmit' function to the form's 'onSubmit' event */}
           <form onSubmit={handleSubmit}>
             <label>How are you feeling today? (1=Stressed, 5=Great)</label>
             
-            {/* We hook our 'handleMoodChange' function to the radio buttons */}
             <div className="mood-radios">
-              <label>
-                <input type="radio" name="mood" value="1" onChange={handleMoodChange} /> 1
-              </label>
-              <label>
-                <input type="radio" name="mood" value="2" onChange={handleMoodChange} /> 2
-              </label>
-              <label>
-                <input type="radio" name="mood" value="3" onChange={handleMoodChange} /> 3
-              </label>
-              <label>
-                <input type="radio" name="mood" value="4" onChange={handleMoodChange} /> 4
-              </label>
-              <label>
-                <input type="radio" name="mood" value="5" onChange={handleMoodChange} /> 5
-              </label>
+              <label><input type="radio" name="mood" value="1" onChange={handleMoodChange} /> 1</label>
+              <label><input type="radio" name="mood" value="2" onChange={handleMoodChange} /> 2</label>
+              <label><input type="radio" name="mood" value="3" onChange={handleMoodChange} /> 3</label>
+              <label><input type="radio" name="mood" value="4" onChange={handleMoodChange} /> 4</label>
+              <label><input type="radio" name="mood" value="5" onChange={handleMoodChange} /> 5</label>
             </div>
             
             <button type="submit" className="submit-button">
