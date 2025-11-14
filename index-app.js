@@ -687,11 +687,7 @@ function refreshUI() {
     updateScoreRing(0);
   }
 
-<<<<<<< HEAD
-  aiInsight.textContent = generateInsight(data);
-=======
   if (aiInsight) aiInsight.textContent = generateInsight(data);
->>>>>>> 7b5abfd (update)
 
   updateCharts(data);
   renderCalendar(data);
