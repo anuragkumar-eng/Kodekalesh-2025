@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — AuroraAuth</title>
+  <link rel="stylesheet" href="login-register-styles.css" />
+</head>
+<body>
+  <div class="aurora-bg" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section class="card auth-card">
+      <header class="card-header">
+        <div class="logo">AuroraAuth</div>
+        <p class="tag">Secure · Fast · Hackathon-ready</p>
+      </header>
+
+      <form id="loginForm" class="form" autocomplete="on" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required placeholder="you@domain.com" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="pw-wrap">
+            <input id="password" name="password" type="password" required minlength="6" placeholder="••••••••" />
+            <button id="togglePw" type="button" class="icon-btn" aria-label="Show password">👁️</button>
+          </div>
+        </div>
+
+        <div class="row space-between">
+          <label class="checkbox">
+            <input type="checkbox" id="remember" />
+            <span>Remember me</span>
+          </label>
+          <a class="link" href="#" id="forgotLink">Forgot?</a>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary">Sign in</button>
+          <a class="btn ghost" href="register.html">Create account</a>
+        </div>
+      </form>
+
+      <footer class="muted">This demo uses client-side storage for testing only. Use Cognito or a backend for production.</footer>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="auth.js"></script>
+  <script>
+    // page-specific wiring
+    document.getElementById('togglePw').addEventListener('click', () => {
+      const pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const password = document.getElementById('password').value;
+      try {
+        await loginUser({email, password});
+        showToast('Welcome back — redirecting…');
+        // redirect to index.html (protected landing)
+        setTimeout(() => window.location = 'index.html', 700);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  </script>
+</body>
+</html>
