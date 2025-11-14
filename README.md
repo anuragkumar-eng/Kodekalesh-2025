@@ -234,7 +234,6 @@ Multi-user support
 
 👨‍💻 Developed By
 
-Team Aphelion — Code Kalesh Edition
-Crafted for hackathons with clean UI & beautiful interactions.
+Team Aphelion
 
 ⭐ If you like this project, consider giving it a star!
