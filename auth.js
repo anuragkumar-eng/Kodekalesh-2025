@@ -57,7 +57,7 @@ async function loginUser({email, password}){
 }
 
 function getAuth(){
-  try { return JSON.parse(localStorage.getItem('aurora_auth')||'null'); } catch(e){ return null; }
+  try { return JSON.parse(localStorage.getItem('aurora_auth')||'null'); } catch(e) { return null; }
 }
 function logout(){
   localStorage.removeItem('aurora_auth');
