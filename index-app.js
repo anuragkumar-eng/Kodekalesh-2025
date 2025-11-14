@@ -3,6 +3,57 @@
 ============================================================ */
 
 /* ==========================
+   LOCAL STORAGE HANDLING
+========================== */
+const STORAGE_KEY = "mindwatch_data_v1";
+
+/* ====== DUMMY DATA FOR DEMO (1 WEEK) ====== */
+(function seedDummyData() {
+  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  if (existing.length > 0) return; // Do not overwrite user data
+
+  const today = new Date();
+  const dummy = [];
+
+  const moods = [4, 3, 2, 3, 1, 4, 3];
+  const stressLevels = [20, 35, 50, 40, 70, 25, 30];
+  const sleepHours = [7, 6, 8, 7.5, 5, 8, 7];
+  const notes = [
+    "Feeling great!",
+    "Pretty good day",
+    "Bit neutral today",
+    "Calm and okay",
+    "Tough day",
+    "Feeling energetic",
+    "Nice balanced day"
+  ];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+
+    dummy.push({
+      ts: d.getTime(),
+      mood: moods[6 - i],
+      stress: stressLevels[6 - i],
+      sleep: sleepHours[6 - i],
+      note: notes[6 - i]
+    });
+  }
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dummy.reverse()));
+})();
+
+function loadData() {
+  const json = localStorage.getItem(STORAGE_KEY);
+  return json ? JSON.parse(json) : [];
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+/* ==========================
    GLOBAL ELEMENTS
 ========================== */
 const pages = document.querySelectorAll(".page");
@@ -31,20 +82,6 @@ const latestSleep = document.getElementById("latestSleep");
 /* Onboarding modal */
 const onboardModal = document.getElementById("onboardModal");
 const onboardOk = document.getElementById("onboardOk");
-
-/* ==========================
-   LOCAL STORAGE HANDLING
-========================== */
-const STORAGE_KEY = "mindwatch_data_v1";
-
-function loadData() {
-  const json = localStorage.getItem(STORAGE_KEY);
-  return json ? JSON.parse(json) : [];
-}
-
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
 
 /* ==========================
    NAVIGATION
@@ -196,7 +233,6 @@ function updateCharts(data) {
   const moods = data.map(e => e.mood);
   const stresses = data.map(e => e.stress);
 
-  // Destroy previous charts to avoid duplicates
   if (trendChart) trendChart.destroy();
   if (moodChart) moodChart.destroy();
   if (stressChart) stressChart.destroy();
@@ -206,16 +242,8 @@ function updateCharts(data) {
     data: {
       labels,
       datasets: [
-        {
-          label: "Mood",
-          data: moods,
-          tension: 0.4
-        },
-        {
-          label: "Stress",
-          data: stresses,
-          tension: 0.4
-        }
+        { label: "Mood", data: moods, tension: 0.4 },
+        { label: "Stress", data: stresses, tension: 0.4 }
       ]
     }
   });
@@ -243,16 +271,9 @@ function updateScoreRing(score) {
     type: "doughnut",
     data: {
       labels: ["Score", "Remaining"],
-      datasets: [
-        {
-          data: [score, 100 - score],
-          borderWidth: 0
-        }
-      ]
+      datasets: [{ data: [score, 100 - score], borderWidth: 0 }]
     },
-    options: {
-      cutout: "70%"
-    }
+    options: { cutout: "70%" }
   });
 }
 
@@ -358,13 +379,11 @@ function refreshUI() {
   const data = loadData();
   const last = data[data.length - 1];
 
-  // Streak
   const streak = computeStreak(data);
   streakNum.textContent = streak;
   streakBig.textContent = streak;
   streakText.textContent = streak === 0 ? "Start tracking daily." : "Great consistency!";
 
-  // Latest stats
   if (last) {
     latestMood.textContent = last.mood;
     latestStress.textContent = last.stress;
@@ -378,10 +397,8 @@ function refreshUI() {
     updateScoreRing(0);
   }
 
-  // Insights
   aiInsight.textContent = generateInsight(data);
 
-  // Charts + Calendar
   updateCharts(data);
   renderCalendar(data);
 }
