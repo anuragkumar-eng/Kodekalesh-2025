@@ -114,15 +114,6 @@ No dependencies.
 No build process.
 Just open and enjoy 🌿
 
-📷 Add Your Screenshots (Optional Section)
-
-You can add a /screenshots folder and display your UI like this:
-
-![Dashboard](screenshots/dashboard.png)
-![Check-in](screenshots/checkin.png)
-![Insights](screenshots/insights.png)
-![Calendar](screenshots/calendar.png)
-
 
 I can generate mockups if you want.
 
