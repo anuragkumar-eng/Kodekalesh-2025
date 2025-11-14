@@ -66,7 +66,7 @@
         await loginUser({email, password});
         showToast('Welcome back — redirecting…');
         // redirect to index.html (protected landing)
-        setTimeout(() => window.location = 'index.html', 700);
+        setTimeout(() => window.location = 'interface.html', 700);
       } catch (err) {
         showToast(err.message, true);
       }
