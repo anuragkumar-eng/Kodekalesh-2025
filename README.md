@@ -1,139 +1,240 @@
-🧠🌿 MindWatch – Your Personal Wellbeing Dashboard
-A clean, modern & interactive mood-tracking experience — powered by Code Kalesh ⚡
-<p align="center"> <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge" /> <img src="https://img.shields.io/badge/Built%20With-HTML%20%7C%20CSS%20%7C%20JS-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/LocalStorage-100%25%20Offline-orange?style=for-the-badge" /> </p> <p align="center"> <img src="https://img.shields.io/badge/UI-Clean%20%26%20Modern-9cf?style=for-the-badge" /> <img src="https://img.shields.io/badge/Charts-Chart.js-purple?style=for-the-badge" /> </p>
-🎨 What is MindWatch?
+🌌 MindWatch + AuroraAuth
+A Modern Wellbeing Dashboard with a Beautiful Auth System — Built for Hackathons
+<p align="center"> <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/Auth-AuroraAuth-purple?style=for-the-badge" /> <img src="https://img.shields.io/badge/Charts-Chart.js-yellow?style=for-the-badge" /> <img src="https://img.shields.io/badge/Storage-LocalStorage-orange?style=for-the-badge" /> </p>
+🧠 MindWatch — Your Personal Wellness Tracker
 
-MindWatch is a beautifully crafted wellbeing monitor that helps you track your mood, stress, sleep, and daily notes — all packed into a silky-smooth UI with live analytics, streak tracking, AI-style insights, and a 30-day mood calendar.
+MindWatch is a sleek, modern, offline-first wellbeing monitoring dashboard.
+Users can track mood, stress, sleep and personal notes — while getting real-time insights, trends, calendars, visual analytics and streak tracking.
 
-The entire app is local-first and works completely offline, ensuring your wellbeing data stays private on your device.
+Everything is beautifully styled, responsive, and runs directly in the browser.
+No backend required.
 
-✨ Core Features
-📝 Daily Check-Ins
+🔐 AuroraAuth — The Login & Register System
 
-Track your emotional and physical status:
+Along with the dashboard, this project includes a dedicated auth module:
 
-Mood (Emoji scale 😄 → 😢)
+✔ Beautiful glassmorphism UI
 
-Stress level (0 – 100)
+✔ Login + Register pages
+
+✔ Password hashing using SHA-256 (demo only)
+
+✔ LocalStorage-based user management
+
+✔ Smooth toast notifications
+
+✔ Auto-redirect after login
+
+✔ Fully offline demo authentication
+
+This is perfect for hackathons where you need quick authentication without a backend.
+
+✨ Major Features
+📝 1. Daily Check-ins
+
+Track your wellbeing:
+
+Mood (emoji scale 😄 → 😢)
+
+Stress (range slider 0–100)
 
 Sleep hours
 
-Quick one-line notes
+Quick personal notes
 
-📊 Powerful Analytics
+Check-ins instantly update the dashboard.
 
-Live Wellbeing Score Ring
+📊 2. Real-time Analytics
 
-Mood + Stress trend charts
+MindWatch includes:
+
+Dynamic Wellbeing Score Ring
+
+Mood trend chart (Chart.js)
+
+Stress trend chart
 
 Auto-generated AI-like insights
 
-Instant UI updates
+Daily streak calculation
 
-🔥 Motivation Tools
+Latest stats panel
 
-Daily streak tracking
+Everything updates live as soon as you save a check-in.
 
-Quick Action Buttons → “Breathe” & “Short Walk”
+🗓️ 3. Mood Calendar (30 Days)
 
-Onboarding tips for new users
+A clean, color-coded mood calendar:
 
-🗓️ Mood Calendar (30 Days)
+Color	Meaning
+🟢 Green	Good mood
+🟡 Yellow	Neutral mood
+🔴 Red	Low mood
+⚪ Grey	No check-in
 
-Beautiful grid with:
+Helps visualize emotional patterns at a glance.
 
-🟢 Good mood
+⚡ 4. Motivation Tools
 
-🟡 Neutral mood
+“Breathe” quick action
 
-🔴 Low mood
+“Take a Walk” quick action
 
-⚪ No check-in
+Optional browser notification reminders
 
-📤 Data Management
+Onboarding modal for new users
 
-Export all data as CSV
+🧩 5. Full Auth System (AuroraAuth)
+Register
 
-Clear today’s data or reset entire localStorage
+Name, email, password
 
-Optional browser notifications for daily reminders
+Stored securely using SHA-256 hash
 
-🌈 Visual Style & UI Highlights
+Redirect to login after signup
 
-MindWatch features a premium interface with:
+Login
 
-Modern gradient accents
+Email + password
 
-Soft card shadows
+Password visibility toggle
 
-Glass-like modal design
+Supports “remember me”
 
-Poppins font aesthetic
+Redirects to dashboard
 
-Responsive layout for all screen sizes
+Error toast on wrong credentials
 
-Smooth components:
+Security Note
 
-Sidebar
+This system is demo-only and uses LocalStorage.
+For production, use AWS Cognito or a backend.
 
-Dashboard widgets
+🎨 6. Premium UI & UX
 
-Charts
+MindWatch + AuroraAuth use:
 
-Mood picker
+Clean gradients
 
-Toast notifications
+Smooth card shadows
 
-This is not just functional — it's pleasing to use 🤌✨
+Poppins & Inter fonts
 
-🧩 Tech Stack
+Glassmorphism login screens
+
+Responsive layout
+
+Modern sidebar navigation
+
+Animated mood picker
+
+Beautiful score ring
+
+Looks extremely polished for hackathons.
+
+📁 Project Structure
+📦 KodeKalesh-2025
+│
+├── login.html                 # AuroraAuth login page
+├── register.html              # AuroraAuth signup page
+├── auth.js                    # Hashed LocalStorage auth system
+│
+├── index.html                 # MindWatch app main UI
+├── index-style.css            # MindWatch UI styling
+├── index-app.js               # App logic: charts, insights, storage
+│
+├── login-register-styles.css  # Auth UI styles
+└── README.md                  # This file
+
+🛠️ Tech Stack
 Layer	Tools
 Frontend	HTML, CSS, JavaScript
+UI	Custom gradients, glassmorphism, responsive design
 Charts	Chart.js
-Storage	Browser localStorage
-UI	Custom gradients, responsive layout
-📁 Project Structure
-📦 mindwatch/
- ├── index.html      # App layout & UI
- ├── style.css       # Styling & responsive design
- └── app.js          # Logic, charts, insights, storage, interactions
+Storage	LocalStorage
+Auth	SHA-256 hashing with SubtleCrypto API
+🚀 Run Locally
 
-🚀 Run Locally (Super Simple)
+No dependencies. No server.
+Just open the files.
 
-Just download or clone the repo:
+1. Clone the repo
+git clone https://github.com/<your-username>/<repo>.git
 
-git clone <your-repo-url>
+2. Open the project
+
+Just double-click:
+
+login.html
 
 
-Then open:
+or
 
 index.html
 
 
-No dependencies.
-No build process.
-Just open and enjoy 🌿
+Works 100% offline.
 
+🧠 How AuroraAuth Works
 
-I can generate mockups if you want.
+AuroraAuth is a simple client-side authentication module used for demos.
 
-💡 Future Enhancements (Ideas)
+✔ Passwords are hashed
+sha256(password + "::" + email)
 
-🔄 Dark Mode toggle
+✔ Users stored securely in LocalStorage
+localStorage.setItem("aurora_users", JSON.stringify(users))
 
-🧩 Tags or categories for notes
+✔ Login verification
 
-📅 Weekly / Monthly summaries
+Hashes the input password
 
-☁️ Optional cloud sync
+Compares with stored hash
 
-🔔 Improved reminder system
+Creates a session token
 
-🧑‍💻 Developed by
-Team Aphelion
+Redirects to index.html
 
-Code Kalesh Edition
+✔ Works offline
 
-Bringing neat, clean, powerful UI to life.
+No API calls.
+Perfect for hackathons.
 
-⭐ If you like this project — don’t forget to star it!
+📈 How MindWatch Works
+✔ Saves daily entries to LocalStorage
+✔ Generates analytics from data:
+
+Score calculation
+
+3-day insights
+
+Streak counter
+
+Charts (Chart.js)
+
+Mood calendar
+
+✔ Exports CSV
+
+Download all mood logs instantly.
+
+🌱 Future Enhancements
+
+Dark mode toggle
+
+Weekly / monthly reports
+
+AI-based mood predictions
+
+Optional cloud sync with AWS
+
+Shared mood journals
+
+Multi-user support
+
+👨‍💻 Developed By
+
+Team Aphelion — Code Kalesh Edition
+Crafted for hackathons with clean UI & beautiful interactions.
+
+⭐ If you like this project, consider giving it a star!
