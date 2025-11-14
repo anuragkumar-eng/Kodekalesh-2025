@@ -2,272 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MindWatch — Wellbeing Monitor</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <link rel="stylesheet" href="index-style.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Register — AuroraAuth</title>
+  <!-- css -->
+  <link rel="stylesheet" href="login-register-styles.css" />
 </head>
-
 <body>
-  <!-- Onboarding Modal -->
-  <div id="onboardModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Welcome to MindWatch</h2>
-      <p>Quick tips to get started:</p>
-      <ul>
-        <li>Use daily check-ins to track mood, stress, sleep & notes.</li>
-        <li>View trends & insights over time.</li>
-        <li>Export CSV for clinicians.</li>
-      </ul>
+  <div class="aurora-bg" aria-hidden="true"></div>
 
-      <button id="onboardOk" class="btn primary large">Got it</button>
-    </div>
-  </div>
-
-  <div class="app">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-top">
-        <div class="logo">MW</div>
-        <div class="brand">
-          <div class="brand-title">MindWatch</div>
-          <div class="brand-sub">MindWellMonitor</div>
-        </div>
-      </div>
-
-      <nav class="side-nav">
-        <button class="side-btn active" data-target="dashboard">Dashboard</button>
-        <button class="side-btn" data-target="checkin">Check-In</button>
-        <button class="side-btn" data-target="insights">Insights</button>
-        <button class="side-btn" data-target="calendar">Calendar</button>
-      </nav>
-
-      <div class="sidebar-bottom">
-        <div class="streak">
-          <div class="streak-num" id="streakNum">—</div>
-          <div class="streak-label">Current Streak</div>
-        </div>
-
-        <div class="theme-toggle">
-          <label class="switch">
-            <input type="checkbox" id="themeToggle">
-            <span class="slider"></span>
-          </label>
-          <div class="toggle-label">Dark</div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- MAIN -->
-    <div class="main">
-      <header class="topbar">
-        <div class="search">
-          <input id="searchInput" placeholder="Search notes, tags..." />
-        </div>
-
-        <div class="top-actions">
-          <button id="notifyBtn" class="btn small">Enable Daily Reminder</button>
-          <div class="avatar">A</div>
-        </div>
+  <main class="wrap">
+    <section class="card auth-card">
+      <header class="card-header">
+        <div class="logo">AuroraAuth</div>
+        <p class="tag">Join the demo — quick setup</p>
       </header>
 
-      <main class="content">
+      <form id="registerForm" class="form" autocomplete="on" novalidate>
+        <div class="field">
+          <label for="name">Full name</label>
+          <input id="name" name="name" type="text" required placeholder="Your name" />
+        </div>
 
-        <!-- DASHBOARD -->
-        <section id="dashboard" class="page active">
-          <div class="row">
-            <div class="card card-large">
-              <div class="card-head">
-                <h3>Daily Wellbeing</h3>
-                <small class="muted">Based on latest check-in</small>
-              </div>
+        <div class="field">
+          <label for="regEmail">Email</label>
+          <input id="regEmail" name="email" type="email" required placeholder="you@domain.com" />
+        </div>
 
-              <div class="dashboard-grid">
-                <div class="score-panel">
-                  <canvas id="scoreRing" width="200" height="200"></canvas>
-                  <div class="score-meta">
-                    <div id="scoreNum" class="big">—</div>
-                    <div id="scoreLabel" class="muted">—</div>
-                  </div>
-                </div>
-
-                <div class="insights-panel">
-                  <div class="insight ai">
-                    <h4>AI Insights</h4>
-                    <p id="aiInsight">No data yet. Do a check-in.</p>
-                  </div>
-
-                  <div class="mini-stats">
-                    <div class="stat">
-                      <div class="s-title">Latest Mood</div>
-                      <div id="latestMood" class="s-value">—</div>
-                    </div>
-                    <div class="stat">
-                      <div class="s-title">Latest Stress</div>
-                      <div id="latestStress" class="s-value">—</div>
-                    </div>
-                    <div class="stat">
-                      <div class="s-title">Latest Sleep</div>
-                      <div id="latestSleep" class="s-value">—</div>
-                    </div>
-                  </div>
-
-                  <div class="action-row">
-                    <button id="quickBreathe" class="btn">Breathe</button>
-                    <button id="quickWalk" class="btn outline">Short Walk</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <h4>Trend Snapshot</h4>
-              <canvas id="trendChart" height="160"></canvas>
-            </div>
+        <div class="field">
+          <label for="regPassword">Password</label>
+          <div class="pw-wrap">
+            <input id="regPassword" name="password" type="password" required minlength="6" placeholder="Create a password" />
+            <button id="togglePwReg" type="button" class="icon-btn" aria-label="Show password">👁️</button>
           </div>
-        </section>
+        </div>
 
-        <!-- CHECK-IN -->
-        <section id="checkin" class="page">
-          <div class="row">
-            <div class="card">
-              <h3>Daily Check-in</h3>
-              <p class="muted">Short check-ins help detect trends early.</p>
+        <div class="actions">
+          <button type="submit" class="btn primary">Create account</button>
+          <a class="btn ghost" href="login.html">Back to sign in</a>
+        </div>
+      </form>
 
-              <div class="form-row">
-                <label>Mood</label>
-                <div class="mood-picker">
-                  <button class="mood" data-value="4">😄</button>
-                  <button class="mood" data-value="3">🙂</button>
-                  <button class="mood" data-value="2">😐</button>
-                  <button class="mood" data-value="1">☹️</button>
-                  <button class="mood" data-value="0">😢</button>
-                </div>
-              </div>
+      <footer class="muted">Demo stores a hashed password locally. For real apps use AWS Cognito or a backend server.</footer>
+    </section>
+  </main>
 
-              <div class="form-row">
-                <label>Stress (0-100)</label>
-                <input id="stressInput" type="range" min="0" max="100" value="30" />
-                <div class="range-val"><span id="stressVal">30</span>/100</div>
-              </div>
+  <div id="toast" role="status" aria-live="polite"></div>
 
-              <div class="form-row two-col">
-                <div>
-                  <label>Sleep (hrs)</label>
-                  <input id="sleepInput" type="number" min="0" max="24" value="7" />
-                </div>
-                <div>
-                  <label>Note (optional)</label>
-                  <input id="noteInput" type="text" maxlength="120" placeholder="One-line note" />
-                </div>
-              </div>
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById('togglePwReg').addEventListener('click', () => {
+      const pw = document.getElementById('regPassword');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    });
 
-              <div class="actions">
-                <button id="saveBtn" class="btn primary large">Save Check-in</button>
-                <button id="clearBtn" class="btn danger">Clear Data</button>
-              </div>
-            </div>
-
-            <div class="card">
-              <h4>Streak & Summary</h4>
-              <div class="streak-large" id="streakBig">—</div>
-              <p class="muted" id="streakText">Build your daily habit.</p>
-            </div>
-          </div>
-        </section>
-
-        <!-- INSIGHTS -->
-        <section id="insights" class="page">
-          <div class="row">
-            <div class="card">
-              <h3>Insights & Trends</h3>
-
-              <div class="charts">
-                <div class="chart-card">
-                  <h4>Mood Trend</h4>
-                  <canvas id="moodChart" height="120"></canvas>
-                </div>
-
-                <div class="chart-card">
-                  <h4>Stress Trend</h4>
-                  <canvas id="stressChart" height="120"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <h4>Quick Exports</h4>
-              <p class="muted">Export your full data as CSV.</p>
-
-              <div class="actions">
-                <button id="exportCsv" class="btn outline">Export CSV</button>
-                <button id="clearAll" class="btn danger">Clear Local Data</button>
-              </div>
-            </div>
-
-            <!-- CSV IMPORT CARD (added) -->
-            <div class="card" id="csv-import-card">
-              <h4>Import CSV & Analyse</h4>
-              <p class="muted">Upload a CSV with columns: <code>timestamp/date</code>, <code>mood</code>, <code>stress</code>, <code>sleep</code>, <code>note</code>.</p>
-
-              <div class="form-row">
-                <input type="file" id="csvFileInput" accept=".csv,text/csv" />
-              </div>
-
-              <div class="form-row" style="display:flex;gap:12px;align-items:center;margin-top:8px;">
-                <label style="display:flex;gap:8px;align-items:center;">
-                  <input type="radio" name="csvMode" value="append" checked /> <small>Append to existing data</small>
-                </label>
-                <label style="display:flex;gap:8px;align-items:center;">
-                  <input type="radio" name="csvMode" value="replace" /> <small>Replace existing data</small>
-                </label>
-              </div>
-
-              <div class="actions" style="margin-top:10px;">
-                <button id="importCsvBtn" class="btn primary">Import & Analyse</button>
-                <button id="clearCsvPreview" class="btn outline">Clear Preview</button>
-              </div>
-
-              <div id="csvResults" style="margin-top:14px; display:none;">
-                <h5>Import Summary</h5>
-                <div id="csvSummary" class="muted" style="font-size:14px;"></div>
-                <div id="csvIssues" style="margin-top:8px;color:#b45309;"></div>
-                <div style="margin-top:8px;">
-                  <button id="acceptImport" class="btn primary">Accept Import</button>
-                  <button id="rejectImport" class="btn ghost">Reject</button>
-                </div>
-              </div>
-            </div>
-            <!-- /CSV IMPORT CARD -->
-
-          </div>
-        </section>
-
-        <!-- CALENDAR -->
-        <section id="calendar" class="page">
-          <div class="row">
-            <div class="card">
-              <h3>Mood Calendar (30 days)</h3>
-              <div id="moodCalendar" class="mood-calendar"></div>
-              <p class="muted">Green = good, Yellow = neutral, Red = low</p>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      <footer class="footer">
-        <div>MindWatch • Team Aphelion</div>
-        <div class="muted">Local demo only</div>
-      </footer>
-    </div>
-  </div>
-
-  <div id="toast" class="toast"></div>
-
-  <script src="index-app.js"></script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('regEmail').value.trim().toLowerCase();
+      const password = document.getElementById('regPassword').value;
+      try {
+        await registerUser({name, email, password});
+        showToast('Account created — redirecting to dashboard…');
+        setTimeout(() => window.location = 'login.html', 900);
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  </script>
 </body>
 </html>
