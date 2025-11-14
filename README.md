@@ -1,169 +1,124 @@
 🌌 MindWatch + AuroraAuth
-A Modern Wellbeing Dashboard with a Beautiful Auth System — Built for Hackathons
-<p align="center"> <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/Auth-AuroraAuth-purple?style=for-the-badge" /> <img src="https://img.shields.io/badge/Charts-Chart.js-yellow?style=for-the-badge" /> <img src="https://img.shields.io/badge/Storage-LocalStorage-orange?style=for-the-badge" /> </p>
-🧠 MindWatch — Your Personal Wellness Tracker
+A Modern Wellbeing Dashboard + Beautiful Auth System — Now Live on AWS Amplify
+<p align="center"> <a href="https://main.d3n51jttgr0w71.amplifyapp.com/"> <img src="https://img.shields.io/badge/Live%20Demo-Open%20App-brightgreen?style=for-the-badge" /> </a> <img src="https://img.shields.io/badge/Hosted%20On-AWS%20Amplify-orange?style=for-the-badge" /> <img src="https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-blue?style=for-the-badge" /> <img src="https://img.shields.io/badge/Auth-AuroraAuth-purple?style=for-the-badge" /> </p>
+🧠 MindWatch — Track Your Mood, Wellness & Daily Habits
 
-MindWatch is a sleek, modern, offline-first wellbeing monitoring dashboard.
-Users can track mood, stress, sleep and personal notes — while getting real-time insights, trends, calendars, visual analytics and streak tracking.
+MindWatch is a clean, modern, offline-first wellbeing dashboard.
+It helps users track mood, stress, sleep patterns, and personal notes – while giving real-time insights, trends, streaks, and a 30-day mood calendar.
 
-Everything is beautifully styled, responsive, and runs directly in the browser.
-No backend required.
+✨ Fully responsive
+✨ Zero backend
+✨ Beautiful UI
+✨ Runs 100% locally
+✨ Deployed on AWS Amplify
 
 🔐 AuroraAuth — The Login & Register System
 
-Along with the dashboard, this project includes a dedicated auth module:
+Your project includes a stylish, glassmorphic authentication system with:
 
-✔ Beautiful glassmorphism UI
+Login & Register pages
 
-✔ Login + Register pages
+SHA-256 password hashing (client-side demo)
 
-✔ Password hashing using SHA-256 (demo only)
+LocalStorage database
 
-✔ LocalStorage-based user management
+Toast notifications
 
-✔ Smooth toast notifications
+Auto-redirect to dashboard
 
-✔ Auto-redirect after login
+“Show Password” toggle
 
-✔ Fully offline demo authentication
+⚠️ This is a demo auth system for hackathons. For production, use AWS Cognito.
 
-This is perfect for hackathons where you need quick authentication without a backend.
+🚀 Live Demo
 
-✨ Major Features
-📝 1. Daily Check-ins
+👉 MindWatch App:
+https://main.d3n51jttgr0w71.amplifyapp.com/
 
-Track your wellbeing:
+Try signing up, logging in, making check-ins, viewing charts, etc. Everything works fully in the browser.
+
+✨ Core Features
+📝 Daily Check-Ins
+
+Track in one click:
 
 Mood (emoji scale 😄 → 😢)
 
-Stress (range slider 0–100)
+Stress (0–100 slider)
 
 Sleep hours
 
-Quick personal notes
+Notes
 
-Check-ins instantly update the dashboard.
+📊 Analytics & Insights
 
-📊 2. Real-time Analytics
+Wellbeing Score Ring
 
-MindWatch includes:
+Mood Trend Chart
 
-Dynamic Wellbeing Score Ring
+Stress Trend Chart
 
-Mood trend chart (Chart.js)
+Latest check-in summary
 
-Stress trend chart
+Auto-generated “AI-style” insights
 
-Auto-generated AI-like insights
+Streak tracking
 
-Daily streak calculation
+🗓️ 30-Day Mood Calendar
 
-Latest stats panel
+Clean, color-coded mood heatmap:
+🟢 Good • 🟡 Neutral • 🔴 Low • ⚪ No entry
 
-Everything updates live as soon as you save a check-in.
+⚡ Motivation Tools
 
-🗓️ 3. Mood Calendar (30 Days)
+“Take a deep breath”
 
-A clean, color-coded mood calendar:
+“Go for a walk”
 
-Color	Meaning
-🟢 Green	Good mood
-🟡 Yellow	Neutral mood
-🔴 Red	Low mood
-⚪ Grey	No check-in
+Optional daily reminder notification
 
-Helps visualize emotional patterns at a glance.
+📤 Data Management
 
-⚡ 4. Motivation Tools
+Export as CSV
 
-“Breathe” quick action
+Clear all data
 
-“Take a Walk” quick action
+Works 100% offline
 
-Optional browser notification reminders
+🌈 Screenshots (optional section)
 
-Onboarding modal for new users
+If you want, I can generate UI mockups & screenshots for this section.
+Just say "Generate screenshots".
 
-🧩 5. Full Auth System (AuroraAuth)
-Register
-
-Name, email, password
-
-Stored securely using SHA-256 hash
-
-Redirect to login after signup
-
-Login
-
-Email + password
-
-Password visibility toggle
-
-Supports “remember me”
-
-Redirects to dashboard
-
-Error toast on wrong credentials
-
-Security Note
-
-This system is demo-only and uses LocalStorage.
-For production, use AWS Cognito or a backend.
-
-🎨 6. Premium UI & UX
-
-MindWatch + AuroraAuth use:
-
-Clean gradients
-
-Smooth card shadows
-
-Poppins & Inter fonts
-
-Glassmorphism login screens
-
-Responsive layout
-
-Modern sidebar navigation
-
-Animated mood picker
-
-Beautiful score ring
-
-Looks extremely polished for hackathons.
-
-📁 Project Structure
-📦 KodeKalesh-2025
-│
-├── login.html                 # AuroraAuth login page
-├── register.html              # AuroraAuth signup page
-├── auth.js                    # Hashed LocalStorage auth system
-│
-├── index.html                 # MindWatch app main UI
-├── index-style.css            # MindWatch UI styling
-├── index-app.js               # App logic: charts, insights, storage
-│
-├── login-register-styles.css  # Auth UI styles
-└── README.md                  # This file
-
-🛠️ Tech Stack
-Layer	Tools
+🧩 Tech Stack
+Layer	Tech
+Hosting	AWS Amplify
 Frontend	HTML, CSS, JavaScript
-UI	Custom gradients, glassmorphism, responsive design
 Charts	Chart.js
+Auth	Custom SHA-256 LocalStorage system
 Storage	LocalStorage
-Auth	SHA-256 hashing with SubtleCrypto API
-🚀 Run Locally
+UI	Glassmorphic Login + Modern Dashboard
+📁 Project Structure
+📦 Project
+│── login.html                 # AuroraAuth login
+│── register.html              # Create account
+│── auth.js                    # SHA-256 auth logic
+│
+│── index.html                 # MindWatch dashboard
+│── index-style.css            # Styling & layout
+│── index-app.js               # App logic + charts
+│
+│── login-register-styles.css  # Auth UI styles
+└── README.md
 
-No dependencies. No server.
-Just open the files.
+🛠️ Development Setup
+1️⃣ Clone the repo
+git clone <repo-url>
+cd project-folder
 
-1. Clone the repo
-git clone https://github.com/<your-username>/<repo>.git
+2️⃣ Open the app
 
-2. Open the project
-
-Just double-click:
+Simply open:
 
 login.html
 
@@ -173,67 +128,40 @@ or
 index.html
 
 
-Works 100% offline.
+That’s it. No build tools. No backend.
 
-🧠 How AuroraAuth Works
+☁️ Deployment (Already Done!)
 
-AuroraAuth is a simple client-side authentication module used for demos.
+This project is live on:
+👉 AWS Amplify Hosting
+https://main.d3n51jttgr0w71.amplifyapp.com/
 
-✔ Passwords are hashed
-sha256(password + "::" + email)
+Amplify automatically:
 
-✔ Users stored securely in LocalStorage
-localStorage.setItem("aurora_users", JSON.stringify(users))
+Deploys from your GitHub
 
-✔ Login verification
+Gives you HTTPS
 
-Hashes the input password
+Handles versioning
 
-Compares with stored hash
-
-Creates a session token
-
-Redirects to index.html
-
-✔ Works offline
-
-No API calls.
-Perfect for hackathons.
-
-📈 How MindWatch Works
-✔ Saves daily entries to LocalStorage
-✔ Generates analytics from data:
-
-Score calculation
-
-3-day insights
-
-Streak counter
-
-Charts (Chart.js)
-
-Mood calendar
-
-✔ Exports CSV
-
-Download all mood logs instantly.
+Provides fast global CDN
 
 🌱 Future Enhancements
 
-Dark mode toggle
+Dark mode
 
-Weekly / monthly reports
+Weekly / monthly analytics
 
-AI-based mood predictions
+Cloud backup (S3 or DynamoDB)
 
-Optional cloud sync with AWS
+Tagging system for notes
 
-Shared mood journals
+Real AI-generated insights
 
 Multi-user support
 
-👨‍💻 Developed By
+👨‍💻 Developer
 
 Team Aphelion
 
-⭐ If you like this project, consider giving it a star!
+⭐ Star this repo if you like the project!
