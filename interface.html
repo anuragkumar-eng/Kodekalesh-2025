@@ -207,6 +207,42 @@
                 <button id="clearAll" class="btn danger">Clear Local Data</button>
               </div>
             </div>
+
+            <!-- CSV IMPORT CARD (added) -->
+            <div class="card" id="csv-import-card">
+              <h4>Import CSV & Analyse</h4>
+              <p class="muted">Upload a CSV with columns: <code>timestamp/date</code>, <code>mood</code>, <code>stress</code>, <code>sleep</code>, <code>note</code>.</p>
+
+              <div class="form-row">
+                <input type="file" id="csvFileInput" accept=".csv,text/csv" />
+              </div>
+
+              <div class="form-row" style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+                <label style="display:flex;gap:8px;align-items:center;">
+                  <input type="radio" name="csvMode" value="append" checked /> <small>Append to existing data</small>
+                </label>
+                <label style="display:flex;gap:8px;align-items:center;">
+                  <input type="radio" name="csvMode" value="replace" /> <small>Replace existing data</small>
+                </label>
+              </div>
+
+              <div class="actions" style="margin-top:10px;">
+                <button id="importCsvBtn" class="btn primary">Import & Analyse</button>
+                <button id="clearCsvPreview" class="btn outline">Clear Preview</button>
+              </div>
+
+              <div id="csvResults" style="margin-top:14px; display:none;">
+                <h5>Import Summary</h5>
+                <div id="csvSummary" class="muted" style="font-size:14px;"></div>
+                <div id="csvIssues" style="margin-top:8px;color:#b45309;"></div>
+                <div style="margin-top:8px;">
+                  <button id="acceptImport" class="btn primary">Accept Import</button>
+                  <button id="rejectImport" class="btn ghost">Reject</button>
+                </div>
+              </div>
+            </div>
+            <!-- /CSV IMPORT CARD -->
+
           </div>
         </section>
 
