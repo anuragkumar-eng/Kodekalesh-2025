@@ -120,22 +120,25 @@ document.querySelectorAll(".mood").forEach(btn => {
 /* ==========================
    STRESS SLIDER UPDATE
 ========================== */
-stressInput.addEventListener("input", () => {
-  stressVal.textContent = stressInput.value;
-});
+if (stressInput) {
+  stressInput.addEventListener("input", () => {
+    if (stressVal) stressVal.textContent = stressInput.value;
+  });
+}
 
 /* ==========================
    SAVE CHECK-IN
 ========================== */
-document.getElementById("saveBtn").addEventListener("click", () => {
+const saveBtn = document.getElementById("saveBtn");
+if (saveBtn) saveBtn.addEventListener("click", () => {
   if (selectedMood === null) return showToast("Choose a mood first.");
 
   const entry = {
     ts: Date.now(),
     mood: selectedMood,
-    stress: Number(stressInput.value),
-    sleep: Number(sleepInput.value),
-    note: noteInput.value.trim()
+    stress: Number(stressInput ? stressInput.value : 50),
+    sleep: Number(sleepInput ? sleepInput.value : 7),
+    note: noteInput ? noteInput.value.trim() : ""
   };
 
   const data = loadData();
@@ -145,13 +148,14 @@ document.getElementById("saveBtn").addEventListener("click", () => {
   refreshUI();
   showToast("Check-in saved!");
 
-  noteInput.value = "";
+  if (noteInput) noteInput.value = "";
 });
 
 /* ==========================
    CLEAR DATA
 ========================== */
-document.getElementById("clearBtn").addEventListener("click", () => {
+const clearBtn = document.getElementById("clearBtn");
+if (clearBtn) clearBtn.addEventListener("click", () => {
   if (confirm("Clear all check-in data?")) {
     saveData([]);
     refreshUI();
@@ -159,7 +163,8 @@ document.getElementById("clearBtn").addEventListener("click", () => {
   }
 });
 
-document.getElementById("clearAll").addEventListener("click", () => {
+const clearAllBtn = document.getElementById("clearAll");
+if (clearAllBtn) clearAllBtn.addEventListener("click", () => {
   if (confirm("Clear local storage completely?")) {
     saveData([]);
     refreshUI();
@@ -282,6 +287,7 @@ function updateScoreRing(score) {
 ========================== */
 function renderCalendar(data) {
   const cal = document.getElementById("moodCalendar");
+  if (!cal) return;
   cal.innerHTML = "";
 
   const today = new Date();
@@ -314,15 +320,296 @@ function renderCalendar(data) {
 }
 
 /* ==========================
+   CSV IMPORT & ANALYSIS
+   (Client-side, no libs)
+========================== */
+
+const csvFileInput = document.getElementById("csvFileInput");
+const importCsvBtn = document.getElementById("importCsvBtn");
+const csvResults = document.getElementById("csvResults");
+const csvSummary = document.getElementById("csvSummary");
+const csvIssues = document.getElementById("csvIssues");
+const acceptImport = document.getElementById("acceptImport");
+const rejectImport = document.getElementById("rejectImport");
+const clearCsvPreview = document.getElementById("clearCsvPreview");
+
+let csvPreviewRecords = []; // parsed records waiting to accept
+
+function parseCSVText(text) {
+  const lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").filter(l => l.trim() !== "");
+  const rows = lines.map(line => {
+    const cols = [];
+    let cur = "";
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' ) {
+        if (inQuotes && line[i+1] === '"') { cur += '\"'; i++; }
+        else inQuotes = !inQuotes;
+        continue;
+      }
+      if (ch === ',' && !inQuotes) {
+        cols.push(cur);
+        cur = "";
+        continue;
+      }
+      cur += ch;
+    }
+    cols.push(cur);
+    return cols.map(c => c.trim());
+  });
+  return rows;
+}
+
+function normalizeHeader(h) {
+  return h.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function rowToEntry(row, headerMap) {
+  const get = (key, idx) => {
+    if (typeof headerMap === "object") {
+      return row[headerMap[key]] ?? "";
+    }
+    return row[idx] ?? "";
+  };
+
+  let tsVal = null;
+  if (headerMap.timestamp !== undefined) tsVal = get('timestamp');
+  else if (headerMap.date !== undefined) tsVal = get('date');
+  else tsVal = row[0];
+
+  let ts = null;
+  if (/^\d+$/.test(tsVal)) ts = Number(tsVal);
+  else {
+    const d = new Date(tsVal);
+    if (!isNaN(d.getTime())) ts = d.getTime();
+  }
+
+  let mood = null;
+  if (headerMap.mood !== undefined) mood = get('mood');
+  else mood = row[1] ?? "";
+
+  let stress = null;
+  if (headerMap.stress !== undefined) stress = get('stress');
+  else stress = row[2] ?? "";
+
+  let sleep = null;
+  if (headerMap.sleep !== undefined) sleep = get('sleep');
+  else sleep = row[3] ?? "";
+
+  let note = "";
+  if (headerMap.note !== undefined) note = get('note');
+  else note = row[4] ?? "";
+
+  const entry = { ts: ts, mood: null, stress: null, sleep: null, note: (note||"").toString() };
+  if (mood !== null && mood !== "") {
+    const mnum = Number(mood);
+    if (!isNaN(mnum)) entry.mood = Math.max(0, Math.min(4, Math.round(mnum)));
+    else {
+      const mm = mood.toString().trim();
+      if (["😄","4","4.0"].includes(mm) || mm.match(/happy|great|good/i)) entry.mood = 4;
+      else if (mm.match(/smil/i) || mm === "3") entry.mood = 3;
+      else if (mm.match(/neutral|meh/i) || mm === "2") entry.mood = 2;
+      else if (mm.match(/sad|low|☹|😢/i) || mm === "1") entry.mood = 1;
+      else entry.mood = null;
+    }
+  }
+
+  if (stress !== null && stress !== "") {
+    const snum = Number(stress);
+    if (!isNaN(snum)) entry.stress = Math.max(0, Math.min(100, Math.round(snum)));
+  }
+
+  if (sleep !== null && sleep !== "") {
+    const sl = Number(sleep);
+    if (!isNaN(sl)) entry.sleep = Math.max(0, Math.min(24, Math.round(sl*10)/10));
+  }
+
+  return entry;
+}
+
+function analyzeParsedCSV(rows) {
+  if (!rows || rows.length === 0) return { records: [], issues: ["Empty file"], summary: null };
+
+  const firstRow = rows[0];
+  let headerMap = null;
+  const possibleHeaders = firstRow.map(h => normalizeHeader(h));
+  const headerTokens = ["timestamp","date","mood","stress","sleep","note"];
+
+  const firstLooksLikeHeader = possibleHeaders.some(h => headerTokens.includes(h));
+  let dataStart = 0;
+
+  if (firstLooksLikeHeader) {
+    headerMap = {};
+    possibleHeaders.forEach((h, idx) => {
+      if (h === "timestamp" || h === "date") headerMap.timestamp = idx;
+      else if (h === "mood") headerMap.mood = idx;
+      else if (h === "stress") headerMap.stress = idx;
+      else if (h === "sleep") headerMap.sleep = idx;
+      else if (h === "note") headerMap.note = idx;
+    });
+    dataStart = 1;
+  } else {
+    headerMap = { timestamp: 0, mood: 1, stress: 2, sleep: 3, note: 4 };
+    dataStart = 0;
+  }
+
+  const records = [];
+  const issues = [];
+
+  for (let i = dataStart; i < rows.length; i++) {
+    const row = rows[i];
+    if (row.length === 0 || row.every(c => c === "")) continue;
+    const e = rowToEntry(row, headerMap);
+    const rowIndex = i + 1;
+    if (!e.ts) {
+      issues.push(`Row ${rowIndex}: Invalid or missing date/timestamp`);
+      continue;
+    }
+    if (e.mood === null || e.mood === undefined) {
+      issues.push(`Row ${rowIndex}: Invalid or missing mood`);
+    }
+    if (e.stress === null || e.stress === undefined) {
+      issues.push(`Row ${rowIndex}: Invalid or missing stress`);
+    }
+    e.mood = (e.mood === null || e.mood === undefined) ? 2 : e.mood;
+    e.stress = (e.stress === null || e.stress === undefined) ? 50 : e.stress;
+    e.sleep = (e.sleep === null || e.sleep === undefined) ? 7 : e.sleep;
+    records.push(e);
+  }
+
+  if (records.length === 0) {
+    issues.push("No valid rows found.");
+    return { records: [], issues, summary: null };
+  }
+
+  records.sort((a,b) => a.ts - b.ts);
+
+  const moods = records.map(r => r.mood);
+  const stresses = records.map(r => r.stress);
+  const sleeps = records.map(r => r.sleep);
+
+  const summary = {
+    count: records.length,
+    startDate: new Date(records[0].ts).toLocaleDateString(),
+    endDate: new Date(records[records.length-1].ts).toLocaleDateString(),
+    avgMood: (moods.reduce((a,b)=>a+b,0)/moods.length).toFixed(2),
+    avgStress: Math.round(stresses.reduce((a,b)=>a+b,0)/stresses.length),
+    avgSleep: (sleeps.reduce((a,b)=>a+b,0)/sleeps.length).toFixed(1),
+    moodDistribution: {
+      good: records.filter(r => r.mood >= 3).length,
+      neutral: records.filter(r => r.mood === 2).length,
+      low: records.filter(r => r.mood <= 1).length
+    },
+    missingDays: (() => {
+      const daySet = new Set(records.map(r => new Date(r.ts).toDateString()));
+      const start = new Date(records[0].ts);
+      const end = new Date(records[records.length-1].ts);
+      let miss = 0;
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) {
+        if (!daySet.has(new Date(d).toDateString())) miss++;
+      }
+      return miss;
+    })()
+  };
+
+  return { records, issues, summary };
+}
+
+function showCSVPreview(parseResult) {
+  csvPreviewRecords = parseResult.records || [];
+  if (!csvResults) return;
+  csvResults.style.display = "block";
+
+  if (!parseResult.summary) {
+    csvSummary.innerHTML = "<strong>No summary available.</strong>";
+  } else {
+    csvSummary.innerHTML = `
+      <strong>Rows:</strong> ${parseResult.summary.count} &nbsp; 
+      <strong>Range:</strong> ${parseResult.summary.startDate} → ${parseResult.summary.endDate} <br/>
+      <strong>Avg Mood:</strong> ${parseResult.summary.avgMood} &nbsp;
+      <strong>Avg Stress:</strong> ${parseResult.summary.avgStress} &nbsp;
+      <strong>Avg Sleep:</strong> ${parseResult.summary.avgSleep}h <br/>
+      <strong>Mood dist:</strong> Good ${parseResult.summary.moodDistribution.good}, Neutral ${parseResult.summary.moodDistribution.neutral}, Low ${parseResult.summary.moodDistribution.low} <br/>
+      <strong>Missing days within range:</strong> ${parseResult.summary.missingDays}
+    `;
+  }
+
+  if (parseResult.issues && parseResult.issues.length > 0) {
+    csvIssues.innerHTML = "<strong>Issues:</strong><ul>" + parseResult.issues.slice(0,10).map(i => `<li>${i}</li>`).join('') + "</ul>";
+  } else {
+    csvIssues.innerHTML = "";
+  }
+}
+
+function clearCSVPreviewUI() {
+  csvPreviewRecords = [];
+  if (!csvResults) return;
+  csvResults.style.display = "none";
+  csvSummary.innerHTML = "";
+  csvIssues.innerHTML = "";
+}
+
+async function handleCsvFile(file) {
+  if (!file) return showToast("No file selected.");
+  const text = await file.text();
+  const rows = parseCSVText(text);
+  const parsed = analyzeParsedCSV(rows);
+  showCSVPreview(parsed);
+}
+
+if (importCsvBtn) importCsvBtn.addEventListener("click", async () => {
+  const f = csvFileInput.files[0];
+  if (!f) return showToast("Choose a CSV file first.");
+  await handleCsvFile(f);
+});
+
+if (clearCsvPreview) clearCsvPreview.addEventListener("click", () => {
+  clearCSVPreviewUI();
+  if (csvFileInput) csvFileInput.value = "";
+});
+
+if (acceptImport) acceptImport.addEventListener("click", () => {
+  if (!csvPreviewRecords || csvPreviewRecords.length === 0) {
+    return showToast("No parsed records to import.");
+  }
+  const modeEl = document.querySelector('input[name="csvMode"]:checked');
+  const mode = modeEl ? modeEl.value : "append";
+  let data = loadData();
+
+  if (mode === "replace") data = csvPreviewRecords;
+  else {
+    const existingDates = new Set(data.map(e => new Date(e.ts).toDateString()));
+    const toAdd = csvPreviewRecords.filter(r => !existingDates.has(new Date(r.ts).toDateString()));
+    data = data.concat(toAdd);
+  }
+
+  data.sort((a,b) => a.ts - b.ts);
+  saveData(data);
+
+  clearCSVPreviewUI();
+  if (csvFileInput) csvFileInput.value = "";
+  refreshUI();
+  showToast("CSV data imported successfully.");
+});
+
+if (rejectImport) rejectImport.addEventListener("click", () => {
+  clearCSVPreviewUI();
+  if (csvFileInput) csvFileInput.value = "";
+  showToast("Import canceled.");
+});
+
+/* ==========================
    CSV EXPORT
 ========================== */
-document.getElementById("exportCsv").addEventListener("click", () => {
+const exportBtn = document.getElementById("exportCsv");
+if (exportBtn) exportBtn.addEventListener("click", () => {
   const data = loadData();
   if (data.length === 0) return showToast("No data.");
 
   const header = "timestamp,mood,stress,sleep,note\n";
   const rows = data
-    .map(e => `${e.ts},${e.mood},${e.stress},${e.sleep},"${e.note}"`)
+    .map(e => `${e.ts},${e.mood},${e.stress},${e.sleep},"${(e.note||"").replace(/"/g,'""')}"`)
     .join("\n");
 
   const blob = new Blob([header + rows], { type: "text/csv" });
@@ -339,7 +626,8 @@ document.getElementById("exportCsv").addEventListener("click", () => {
 /* ==========================
    NOTIFICATIONS
 ========================== */
-document.getElementById("notifyBtn").addEventListener("click", async () => {
+const notifyBtn = document.getElementById("notifyBtn");
+if (notifyBtn) notifyBtn.addEventListener("click", async () => {
   const perm = await Notification.requestPermission();
   if (perm === "granted") {
     new Notification("MindWatch Reminder", {
@@ -352,11 +640,13 @@ document.getElementById("notifyBtn").addEventListener("click", async () => {
 /* ==========================
    QUICK ACTIONS
 ========================== */
-document.getElementById("quickBreathe").addEventListener("click", () => {
+const quickBreathe = document.getElementById("quickBreathe");
+if (quickBreathe) quickBreathe.addEventListener("click", () => {
   showToast("Take a deep breath…");
 });
 
-document.getElementById("quickWalk").addEventListener("click", () => {
+const quickWalk = document.getElementById("quickWalk");
+if (quickWalk) quickWalk.addEventListener("click", () => {
   showToast("Try a 5-minute walk!");
 });
 
@@ -364,11 +654,11 @@ document.getElementById("quickWalk").addEventListener("click", () => {
    ONBOARDING MODAL
 ========================== */
 if (!localStorage.getItem("mw_seen_onboarding")) {
-  onboardModal.classList.remove("hidden");
+  if (onboardModal) onboardModal.classList.remove("hidden");
 }
 
-onboardOk.addEventListener("click", () => {
-  onboardModal.classList.add("hidden");
+if (onboardOk) onboardOk.addEventListener("click", () => {
+  if (onboardModal) onboardModal.classList.add("hidden");
   localStorage.setItem("mw_seen_onboarding", "yes");
 });
 
@@ -380,24 +670,28 @@ function refreshUI() {
   const last = data[data.length - 1];
 
   const streak = computeStreak(data);
-  streakNum.textContent = streak;
-  streakBig.textContent = streak;
-  streakText.textContent = streak === 0 ? "Start tracking daily." : "Great consistency!";
+  if (streakNum) streakNum.textContent = streak;
+  if (streakBig) streakBig.textContent = streak;
+  if (streakText) streakText.textContent = streak === 0 ? "Start tracking daily." : "Great consistency!";
 
   if (last) {
-    latestMood.textContent = last.mood;
-    latestStress.textContent = last.stress;
-    latestSleep.textContent = last.sleep;
+    if (latestMood) latestMood.textContent = last.mood;
+    if (latestStress) latestStress.textContent = last.stress;
+    if (latestSleep) latestSleep.textContent = last.sleep;
 
     const score = computeScore(last);
-    scoreNum.textContent = score;
-    scoreLabel.textContent = score > 70 ? "Good" : score > 40 ? "Fair" : "Low";
+    if (scoreNum) scoreNum.textContent = score;
+    if (scoreLabel) scoreLabel.textContent = score > 70 ? "Good" : score > 40 ? "Fair" : "Low";
     updateScoreRing(score);
   } else {
     updateScoreRing(0);
   }
 
+<<<<<<< HEAD
   aiInsight.textContent = generateInsight(data);
+=======
+  if (aiInsight) aiInsight.textContent = generateInsight(data);
+>>>>>>> 7b5abfd (update)
 
   updateCharts(data);
   renderCalendar(data);
